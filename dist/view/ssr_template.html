@@ -1,0 +1,98 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline' 'unsafe-eval' *.davdian.com *.dvmama.com *.bravetime.net *.vyohui.cn *.qq.com *.growingio.com">
+<script>(function(){var b=window.designWidth;delete window.designWidth;function a(e){e=e||b||375;var f=document.documentElement.clientWidth;if(f>640){f=640}else{if(f<320){f=320}}var c=(f/e)*100;document.documentElement.style.fontSize=c+"px";var d=window.getComputedStyle(document.documentElement).fontSize.replace("px","");if(d!==c){document.documentElement.style.fontSize=c*c/d+"px"}}a();window.addEventListener("resize",a,false)})();</script>
+
+    <title>{{{ title }}}</title>
+    {{{ renderStyles() }}}
+  </head>
+  <body class="loaded">
+    <!--vue-ssr-outlet-->
+
+    <!--loading动画-->
+<div class="page-loading">
+  <div class="mask">
+    <div class="center">
+      <div class="point"></div>
+      <div class="point"></div>
+      <div class="point"></div>
+      <div class="point"></div>
+      <div class="point"></div>
+      <div class="point"></div>
+      <div class="point"></div>
+      <div class="point"></div>
+    </div>
+    <!--<img class="gif" src="//5e.dvmama.com/m/static/dist/static/common/img/loading.gif?v=2018-08-07_14:14:36">-->
+  </div>
+  <script>
+    // 使page-loading的圆点变圆（因宽高有小数时有棱角）
+    (function () {
+      /**
+       * 插入css规则
+       * @param rule {String} css文本
+       */
+      function insertStyle(rule) {
+        var style = document.createElement('style');
+        style.appendChild(document.createTextNode(rule));
+        document.head.appendChild(style);
+      }
+
+      // 除去小数
+      var selector = '.page-loading .mask .center .point';
+      var point = document.querySelector(selector);
+      if (point) {
+        var computedStyle = window.getComputedStyle(point);
+        if (computedStyle && computedStyle.width) {
+          var width = parseInt(computedStyle.width);
+          insertStyle(selector + '{width: ' + width + 'px !important; height: ' + width + 'px !important;}');
+        }
+      }
+    })()
+  </script>
+</div>
+
+<!--<script crossorigin="anonymous" integrity="sha256-WRc/eG3R84AverJv0zmqxAmdwQxstUpqkiE+avJ3WSo=" src="//3n.dvmama.com/babel-polyfill/6.26.0/polyfill.min.js"></script>-->
+<!--<script crossorigin="anonymous" integrity="sha256-Gs0UYwrz/B58FsQggzU+vvCSyG/pewemP4Lssjzv8Ho=" src="//3n.dvmama.com/vue/2.4.2/vue.min.js"></script>-->
+<!--<script crossorigin="anonymous" integrity="sha256-fMNK/+4LyoLY5kldi0tEXinECS/O0UAoKBoCMrsqzQ0=" src="//3n.dvmama.com/vue-lazyload/1.0.3/vue-lazyload.js"></script>-->
+<!--<script crossorigin="anonymous" integrity="sha256-JAW99MJVpJBGcbzEuXk4Az05s/XyDdBomFqNlM3ic+I=" src="//3n.dvmama.com/jquery/3.2.0/jquery.min.js"></script>-->
+<!--<script crossorigin="anonymous" integrity="sha256-fKZuSDjJDMGPVNpUcSgczN3zf+07Bjw6xHRVy2o6oP8=" src="//3n.dvmama.com/vconsole/3.0.0/vconsole.min.js"></script>-->
+<!--<script crossorigin="anonymous" integrity="sha256-0jsEcb9GTEfQk8Q8S+uV/BlFlyAAZWAtENQe+f4RLKw=" src="//3n.dvmama.com/growingIO/growingIO.davdian.v4.js"></script>-->
+
+<!--按需加载js-->
+<script>
+  var s = '/script';
+  // babel-polyfill
+  if (!window.Object.assign || !window.Object.values) {
+    document.write('<script crossorigin="anonymous" integrity="sha256-WRc/eG3R84AverJv0zmqxAmdwQxstUpqkiE+avJ3WSo=" src="//3n.dvmama.com/babel-polyfill/6.26.0/polyfill.min.js"><' + s + '>');
+  }
+  // vconsole
+  if (document.cookie.indexOf('h5_debug_flag=1;') !== -1) {
+    document.write('<script crossorigin="anonymous" integrity="sha256-fKZuSDjJDMGPVNpUcSgczN3zf+07Bjw6xHRVy2o6oP8=" src="//3n.dvmama.com/vconsole/3.0.0/vconsole.min.js"><' + s + '>');
+  }
+  s = undefined;
+</script>
+
+<!--第三方js-->
+<script src="//5e.dvmama.com/m/static/dist/static/common/vendor.dll.js?v=2018-08-07_14:14:36"></script>
+
+<!--延迟加载的js资源-->
+<script>
+  window.addEventListener('load', function () {
+    setTimeout(function () {
+      var script = document.createElement('script');
+      script.setAttribute('crossorigin', 'anonymous');
+      script.setAttribute('integrity', 'sha256-a3OG8vKFaNhWG0W/0Ww6ZiyiLCI/fzcyFnT5AtJ86/Q=');
+      script.src = '//3n.dvmama.com/growingIO/growingIO.davdian.v5.js';
+      document.body.appendChild(script);
+    }, 1000);
+  }, false);
+</script>
+
+    <script src="//5e.dvmama.com/m/static/dist/static/common/js/common.js?v=2018-08-07_14:14:36"></script>
+    {{{ renderState() }}}
+    {{{ renderScripts() }}}
+  </body>
+</html>

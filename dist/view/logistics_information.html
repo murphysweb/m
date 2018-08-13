@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>物流详情</title>
+    <meta charset="UTF-8">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Security-Policy" content="script-src 'unsafe-inline' 'unsafe-eval' *.davdian.com *.dvmama.com *.bravetime.net *.vyohui.cn *.qq.com *.growingio.com">
+<script>(function(){var b=window.designWidth;delete window.designWidth;function a(e){e=e||b||375;var f=document.documentElement.clientWidth;if(f>640){f=640}else{if(f<320){f=320}}var c=(f/e)*100;document.documentElement.style.fontSize=c+"px";var d=window.getComputedStyle(document.documentElement).fontSize.replace("px","");if(d!==c){document.documentElement.style.fontSize=c*c/d+"px"}}a();window.addEventListener("resize",a,false)})();</script>
+<link rel="stylesheet" href="//5e.dvmama.com/m/static/dist/static/common/css/common.css?v=2018-08-07_14:14:36">
+
+    <!--<link rel="stylesheet" href="//3n.dvmama.com/swiper/swiper-3.3.1.min.css">-->
+    <link rel="stylesheet" href="//5e.dvmama.com/m/static/dist/static/common/css/common.css?v=2018-08-07_14:14:36">
+    <link rel="stylesheet" href="//5e.dvmama.com/m/static/dist/static/page/logistics_information/css/logistics_information.css?v=2018-08-07_14:14:36">
+</head>
+
+<body>
+    <div class="app" v-cloak :class="{native: ua.isDvdApp(), android: ua.isAndroid(), ios: ua.isIos()}" :style="{minHeight: document.documentElement.clientHeight - 44 + 'px'}">
+        <!--标题-->
+        <dvd-service-com-title title="物流详情" back home></dvd-service-com-title>
+        <!-- 内容主体部分 -->
+        <div class="order_delivery_container" v-if="response">
+            <!-- 订单详情 -->
+            <div class="order_index dav-shadow">
+                <div class="order_id">
+                    <span class="dav-color6">订单编号：</span>
+                    <span>{{response.orderInfo.orderSn}}</span>
+                    <!-- 订单状态 -->
+                    <span class='pull-right dav-red' v-if="response.orderInfo.orderStatusName">{{response.orderInfo.orderStatusName}}</span>
+                </div>
+                <div class="order_id" v-if="response.orderInfo.deliverySn">
+                    <span class="dav-color6">发货单号：</span>
+                    <span>{{response.orderInfo.deliverySn}}</span>
+                </div>
+                <div class="order_date">
+                    <span class="dav-color6">订单日期：</span>
+                    <span>{{response.orderInfo.orderDateTime}}</span>
+                </div>
+            </div>
+
+            <!-- 如果订单中的商品 订单中的商品分属多个发货方 -->
+            <div v-if="response.orderInfo.deliveryNum > 1" class="order_delivery_info mt12">温馨提示：订单中的商品分属多个发货方，所以进行了拆分发货</div>
+            <!-- 商品列表 -->
+            <div class="order_list_child mt12 single_goods with_delivery">
+                <a class="order_child_inner dav-shadow" :href="'/o-'+orderId+'.html?did='+deliveryId">
+                    <div v-if="response.goodsList.length" class="order_good_list">
+                        <section v-if="response.goodsList.length > 1">
+                            <div class="img_container">
+                                <div class="img_container_inner">
+                                    <img v-for="item in response.goodsList" :src="item.thumbImg">
+                                </div>
+                            </div>
+                        </section>
+                        <section v-else v-for="item in response.goodsList">
+                            <div class="order_good_img_container">
+                                <img :src="item.thumbImg">
+                            </div>
+                            <div class="order_good_info_container dav-small">
+                                <div class="order_good_name">{{item.goodsName}}</div>
+                                <div class="order_good_price">￥{{item.goodsPrice}} X {{item.sendNum}}</div>
+                            </div>
+                        </section>
+                    </div>
+                </a>
+                <div class="orderMessage">
+                    <p class="title">物流问题处理进展</p>
+                    <div class="orderMessageBox">
+                    </div>
+                </div>
+                <div class="order_good_state">
+                    <span class="dav-small dav-color-6">由{{response.orderInfo.supplierName}}发货</span>
+                    <span v-if="response.orderInfo.deliveryOrderStatus == 1" class="dav-btn btn-white btn-small pull-right order-tx" @click="remindingTheShipments">提醒发货</span>
+                    <span class="dav-small dav-red pull-right">{{response.orderInfo.deliveryOrderStatusName}}</span>
+                </div>
+                <div v-for="deliveryItem in response.deliveryInfo" v-show="showList" class="order_goods_group_wl_container dav-color-6 dav-small">
+                    <!-- 可展开收起部分 物流详情列表 -->
+                    <div class="order_goods_group_wl_con dav-shadow">
+                        <div class="order_goods_group_wl_id">
+                            <span>承运人：{{deliveryItem.logisticName}}</span>
+                            <span class="pull-right">
+                <span style="width: auto">快递单号：</span>
+                            <!-- 快递单号点击可跳转到百度查询 -->
+                            <a :href="'https://www.baidu.com/s?wd='+deliveryItem.logisticCode">
+                                <span class="btn-white" style="padding:0px 10px;text-decoration:none;width: auto;color: #FF4A7D">{{deliveryItem.logisticCode}}</span>
+                            </a>
+                            </span>
+                            <!-- 物流投诉按钮 -->
+                            <a :href="'/orderComplain.html?did='+deliveryId+'&logisticsCode='+deliveryItem.shipperCode+':'+deliveryItem.logisticCode">
+                                <span class="orderServer">物流投诉</span>
+                            </a>
+                        </div>
+                        <div v-for="(traces,index) in deliveryItem.traces" class="order_goods_group_wl_item">
+                            <div v-if="index == 0" class="line_img" style="background: url(//9i.dvmama.com/free/2017/11/23/o_shipping_line22.png) no-repeat;background-size: cover;"></div>
+                            <div v-else-if="index == deliveryItem.traces.length - 1" class="line_img" style="background: url(//9i.dvmama.com/free/2017/11/23/o_shipping_line11.png) no-repeat;background-size: cover;"></div>
+                            <div v-else class="line_img" style="background: url(//9i.dvmama.com/free/2017/11/23/o_shipping_line33.png) no-repeat;background-size: cover;"></div>
+                            <div class="order_goods_group_wl_inner">
+                                <div class="order_goods_group_wl_text">
+                                    <div class="dav-normal">{{traces.acceptStation}}</div>
+                                    <div>{{traces.acceptTime}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 点击收起/展开物流信息 -->
+                <div @click="showList = !showList" class="order_goods_group_button dav-green">
+                    <span>{{showList ? '收起物流信息' : '展开物流信息'}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--loading动画-->
+<div class="page-loading">
+  <div class="mask">
+    <div class="center">
+      <div class="point"></div>
+      <div class="point"></div>
+      <div class="point"></div>
+      <div class="point"></div>
+      <div class="point"></div>
+      <div class="point"></div>
+      <div class="point"></div>
+      <div class="point"></div>
+    </div>
+    <!--<img class="gif" src="//5e.dvmama.com/m/static/dist/static/common/img/loading.gif?v=2018-08-07_14:14:36">-->
+  </div>
+  <script>
+    // 使page-loading的圆点变圆（因宽高有小数时有棱角）
+    (function () {
+      /**
+       * 插入css规则
+       * @param rule {String} css文本
+       */
+      function insertStyle(rule) {
+        var style = document.createElement('style');
+        style.appendChild(document.createTextNode(rule));
+        document.head.appendChild(style);
+      }
+
+      // 除去小数
+      var selector = '.page-loading .mask .center .point';
+      var point = document.querySelector(selector);
+      if (point) {
+        var computedStyle = window.getComputedStyle(point);
+        if (computedStyle && computedStyle.width) {
+          var width = parseInt(computedStyle.width);
+          insertStyle(selector + '{width: ' + width + 'px !important; height: ' + width + 'px !important;}');
+        }
+      }
+    })()
+  </script>
+</div>
+
+<!--<script crossorigin="anonymous" integrity="sha256-WRc/eG3R84AverJv0zmqxAmdwQxstUpqkiE+avJ3WSo=" src="//3n.dvmama.com/babel-polyfill/6.26.0/polyfill.min.js"></script>-->
+<!--<script crossorigin="anonymous" integrity="sha256-Gs0UYwrz/B58FsQggzU+vvCSyG/pewemP4Lssjzv8Ho=" src="//3n.dvmama.com/vue/2.4.2/vue.min.js"></script>-->
+<!--<script crossorigin="anonymous" integrity="sha256-fMNK/+4LyoLY5kldi0tEXinECS/O0UAoKBoCMrsqzQ0=" src="//3n.dvmama.com/vue-lazyload/1.0.3/vue-lazyload.js"></script>-->
+<!--<script crossorigin="anonymous" integrity="sha256-JAW99MJVpJBGcbzEuXk4Az05s/XyDdBomFqNlM3ic+I=" src="//3n.dvmama.com/jquery/3.2.0/jquery.min.js"></script>-->
+<!--<script crossorigin="anonymous" integrity="sha256-fKZuSDjJDMGPVNpUcSgczN3zf+07Bjw6xHRVy2o6oP8=" src="//3n.dvmama.com/vconsole/3.0.0/vconsole.min.js"></script>-->
+<!--<script crossorigin="anonymous" integrity="sha256-0jsEcb9GTEfQk8Q8S+uV/BlFlyAAZWAtENQe+f4RLKw=" src="//3n.dvmama.com/growingIO/growingIO.davdian.v4.js"></script>-->
+
+<!--按需加载js-->
+<script>
+  var s = '/script';
+  // babel-polyfill
+  if (!window.Object.assign || !window.Object.values) {
+    document.write('<script crossorigin="anonymous" integrity="sha256-WRc/eG3R84AverJv0zmqxAmdwQxstUpqkiE+avJ3WSo=" src="//3n.dvmama.com/babel-polyfill/6.26.0/polyfill.min.js"><' + s + '>');
+  }
+  // vconsole
+  if (document.cookie.indexOf('h5_debug_flag=1;') !== -1) {
+    document.write('<script crossorigin="anonymous" integrity="sha256-fKZuSDjJDMGPVNpUcSgczN3zf+07Bjw6xHRVy2o6oP8=" src="//3n.dvmama.com/vconsole/3.0.0/vconsole.min.js"><' + s + '>');
+  }
+  s = undefined;
+</script>
+
+<!--第三方js-->
+<script src="//5e.dvmama.com/m/static/dist/static/common/vendor.dll.js?v=2018-08-07_14:14:36"></script>
+
+<!--延迟加载的js资源-->
+<script>
+  window.addEventListener('load', function () {
+    setTimeout(function () {
+      var script = document.createElement('script');
+      script.setAttribute('crossorigin', 'anonymous');
+      script.setAttribute('integrity', 'sha256-a3OG8vKFaNhWG0W/0Ww6ZiyiLCI/fzcyFnT5AtJ86/Q=');
+      script.src = '//3n.dvmama.com/growingIO/growingIO.davdian.v5.js';
+      document.body.appendChild(script);
+    }, 1000);
+  }, false);
+</script>
+
+    <!--<script src="//3n.dvmama.com/swiper/swiper-3.3.1.min.js"></script>-->
+    <script src="//5e.dvmama.com/m/static/dist/static/common/js/common.js?v=2018-08-07_14:14:36"></script>
+    <script src="//5e.dvmama.com/m/static/dist/static/page/logistics_information/js/logistics_information.js?v=2018-08-07_14:14:36"></script>
+</body>
+
+</html>
